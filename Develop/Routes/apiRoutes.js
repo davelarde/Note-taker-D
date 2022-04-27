@@ -41,5 +41,5 @@ module.exports = app =>{
 
         fs.writeFileSync('./db/db.json', JSON.stringify(noteData), 'utf-8');
         res.json("Note deleted!");
-    })
+    });
 }
