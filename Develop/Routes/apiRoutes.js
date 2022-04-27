@@ -1,5 +1,5 @@
 const fs= require("fs")
-const noteData = getNotes();
+const notesData = getNotes();
 
 function getNotes(){
     const data = fs.readFileSync("./db/db.json", "utf-8");
@@ -17,12 +17,12 @@ return notes ;
 module.exports = app =>{
 
     app.get("/api/notes", (req, res)=>{
-        noteData = getNotes();
+        notesData = getNotes();
         res.json(notesData);
     });
 
     app.post("/api/notes", (req, res)=>{
-        noteData.push(req.body);
+        notesData.push(req.body);
         fs.writeFileSync('./db/db.json', JSON.stringify(noteData), 'utf-8');
         res.json(true);
     });
@@ -36,8 +36,8 @@ module.exports = app =>{
 
         })[0];
 
-        const index = noteData.indexOf(note);
-        noteData.splice(index, 1);
+        const index = notesData.indexOf(note);
+        notesData.splice(index, 1);
 
         fs.writeFileSync('./db/db.json', JSON.stringify(noteData), 'utf-8');
         res.json("Note deleted!");
