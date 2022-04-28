@@ -1,45 +1,32 @@
 const fs= require("fs")
-const notesData = getNotes();
 
-function getNotes(){
-    const data = fs.readFileSync("./db/db.json", "utf-8");
+module.exports = (app)=>{
+    let noteList = JSON.parse(fs.readFileSync('./db/db.json', 'utf-8'));
 
-    const notes = JSON.parse(data);
+    app.get("/api/notes",(req, res)=>{
 
-    for (let i = 0; i < notes.length; i++) {
-        notes[i].id ='' + i;
-        
-    }
-return notes ;
+        return res.json(noteList);
 
-}
-
-module.exports = app =>{
-
-    app.get("/api/notes", (req, res)=>{
-        notesData = getNotes();
-        res.json(notesData);
     });
 
     app.post("/api/notes", (req, res)=>{
-        notesData.push(req.body);
-        fs.writeFileSync('./db/db.json', JSON.stringify(noteData), 'utf-8');
-        res.json(true);
+        let lastId;
+        if (noteList.length){
+            lastId = Math.max(...(noteList.map(note => note.id)));
+        } else{
+            lastId = 0;
+        }
+
+        const id = lastId + 1
+
+        noteList.push({id,...req.body});
+        res.json(noteList.slice(-1));
     });
 
-    app.delete("/api/notes/:id", (req , res)=>{
-        const requestID = req.params.id;
-        console.log(requestID);
+    app.delete("/api/notes/:id",(req, res)=>{
+        let findNote = noteList.find(({id})=> id === JSON.parse(req.params.id));
 
-        const note = noteData.filter(note =>{
-            return note.id === requestID
-
-        })[0];
-
-        const index = notesData.indexOf(note);
-        notesData.splice(index, 1);
-
-        fs.writeFileSync('./db/db.json', JSON.stringify(noteData), 'utf-8');
-        res.json("Note deleted!");
+        noteList.splice(noteList.indexOf(findNote), 1);
+        res.end("Note was deleted");
     });
-}
+};
