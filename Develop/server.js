@@ -15,7 +15,7 @@ app.use(express.static("public"));
 const notesRouter = require("./Routes/notes")
 app.use("/api/notes",notesRouter)
 
-app.get('/notes',(req, res)=>{
+app.get('/notes',(req, res)=>{  
     res.sendFile(__dirname + "/public/notes.html")
 }); 
 
